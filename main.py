@@ -11,8 +11,11 @@ menuwindow = True
 pygame.font.init()
 pygame.font.get_init()
 menu = pygame.display.set_mode((600,600))
+players = [2,3,4]
+i=0
 tcpip = 0
 joinmenu = 0
+createserver = 0
 user_text = '0000.0000.0000.0000'
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('chartreuse4')
@@ -28,6 +31,7 @@ text5 = font2.render('Create server', True, (0, 255, 0))
 text6 = font2.render('back', True, (0, 255, 0))
 text7 = font2.render('Server IP :', True, (0, 255, 0))
 text8 = font2.render('Connect', True, (0, 255, 0))
+text9 = font2.render('Start', True, (0, 255, 0))
 
 input_rect = pygame.Rect(230, 180, 400, 32)
 textRect1 = text1.get_rect()
@@ -48,12 +52,17 @@ textRect8 = text6.get_rect()
 textRect8.center = (300,400)
 textRect9 = text8.get_rect()
 textRect9.center = (300,300)
+textRect10 = text6.get_rect()
+textRect10.center = (300,500)
+
+textRect12 = text9.get_rect()
+textRect12.center = (300,300)
 pygame.display.set_caption("cfgame-MENU")
 xc = 200
 yc = 295
 while menuwindow:
     menu.fill((0,0,0))
-    if tcpip == 0 and joinmenu == 0 :
+    if tcpip == 0 and joinmenu == 0 and createserver == 0 :
         menu.blit(text1, textRect1)
         menu.blit(text2, textRect2)
         menu.blit(text3, textRect3)
@@ -80,6 +89,13 @@ while menuwindow:
         menu.blit(text_surface, (input_rect.x, input_rect.y + 5))
 
         input_rect.w = max(230, text_surface.get_width() + 10)
+    if createserver == 1 :
+        text10 = font2.render('Number of players:' + str(players[i]), True, (0, 255, 0))
+        textRect11 = text10.get_rect()
+        textRect11.center = (300, 400)
+        menu.blit(text6, textRect10)
+        menu.blit(text10, textRect11)
+        menu.blit(text9, textRect12)
 
     choice = pygame.draw.rect(menu, pygame.Color(0, 255, 0), pygame.Rect(xc, yc, 10, 10))
 
@@ -100,28 +116,43 @@ while menuwindow:
             # formation
             else:
                 user_text += event1.unicode
-            if event1.key == pygame.K_KP_ENTER and yc == 295 and tcpip == 0:
+            if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 0 and createserver ==0:
                 client.client()
-            if event1.key == pygame.K_KP_ENTER and yc == 295 and tcpip == 1:
+            if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 1:
                 joinmenu = 1
                 tcpip = 0
-            if event1.key == pygame.K_KP_ENTER and yc == 395 and joinmenu == 1:
+            if event1.key == pygame.K_RETURN and yc == 495 and createserver == 1:
+                createserver = 0
+                tcpip = 1
+                yc = 295
+            if event1.key == pygame.K_RETURN and yc == 295 and createserver == 1:
+                server.server(players[i])
+            if event1.key == pygame.K_RETURN and yc == 395 and joinmenu == 1 and tcpip == 0:
                 joinmenu = 0
                 tcpip = 1
-            if event1.key == pygame.K_KP_ENTER and yc == 395 and tcpip == 1:
-                server.server()
-            if event1.key == pygame.K_KP_ENTER and yc == 395:
+                createserver = 0
+                yc = 295
+            if event1.key == pygame.K_RETURN and yc == 395 and tcpip == 1:
+                createserver = 1
+                tcpip = 0
+                joinmenu = 0
+                yc = 295
+            if event1.key == pygame.K_RETURN and yc == 395 and createserver == 0 and joinmenu == 0 and tcpip == 0 :
                 tcpip = 1
-            if event1.key == pygame.K_KP_ENTER and yc == 495:
+            if event1.key == pygame.K_LEFT and i > 0 and yc == 395 and createserver == 1:
+                i = i - 1
+            if event1.key == pygame.K_RIGHT and i < 2 and yc == 395 and createserver == 1:
+                i = i + 1
+            if event1.key == pygame.K_RETURN and yc == 495:
                 tcpip = 0
                 yc = 295
-            if event1.key == pygame.K_DOWN and yc == 395 and tcpip == 1 :
+            if event1.key == pygame.K_DOWN and yc == 395 and (tcpip == 1 or createserver == 1):
                 yc = 495
             if event1.key == pygame.K_DOWN and yc == 295:
                 yc = 395
-            if event1.key == pygame.K_UP and yc == 395 :
+            if event1.key == pygame.K_UP and yc == 395:
                 yc = 295
-            if event1.key == pygame.K_UP and yc == 495 :
+            if event1.key == pygame.K_UP and yc == 495:
                 yc = 395
 
         # only do something if the event is of type QUIT
