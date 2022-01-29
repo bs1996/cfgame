@@ -4,9 +4,9 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import socket
 import pygame
-import client
+import local
 import server
-
+import Join
 menuwindow = True
 pygame.font.init()
 pygame.font.get_init()
@@ -116,8 +116,8 @@ while menuwindow:
             # formation
             else:
                 user_text += event1.unicode
-            if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 0 and createserver ==0:
-                client.client()
+            if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 0 and joinmenu == 0 and createserver == 0:
+                local.local()
             if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 1:
                 joinmenu = 1
                 tcpip = 0
@@ -127,6 +127,8 @@ while menuwindow:
                 yc = 295
             if event1.key == pygame.K_RETURN and yc == 295 and createserver == 1:
                 server.server(players[i])
+            if event1.key == pygame.K_RETURN and yc == 295 and createserver ==0 and joinmenu == 1 and tcpip == 0:
+                Join.join("192.168.1.0")
             if event1.key == pygame.K_RETURN and yc == 395 and joinmenu == 1 and tcpip == 0:
                 joinmenu = 0
                 tcpip = 1
