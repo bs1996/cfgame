@@ -1,6 +1,6 @@
 import pygame,sys,numpy
 import socket
-def client():
+def local():
     pygame.init()
     pygame.font.init()
     pygame.font.get_init()
