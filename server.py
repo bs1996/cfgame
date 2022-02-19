@@ -13,6 +13,7 @@ def server(player):
    # instead we have inputted an empty string
    # this makes the server listen to requests
    # coming from other computers on the network
+   s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
    s.bind(('', port))
    print("socket binded to %s" % (port))
 
@@ -29,7 +30,7 @@ def server(player):
 
       # send a thank you message to the client. encoding to send byte type.
       c.send('Thank you for connecting'.encode())
-
+      print(c.recv(1024).decode())
       # Close the connection with the client
       c.close()
 
