@@ -1,7 +1,7 @@
 import pygame,socket,numpy
 def join(ip):
     import socket
-
+    message=input('write message')
     # Create a socket object
     s = socket.socket()
 
@@ -13,5 +13,6 @@ def join(ip):
 
     # receive data from the server and decoding to get the string.
     print(s.recv(1024).decode())
+    s.send(message.encode())
     # close the connection
     s.close()
