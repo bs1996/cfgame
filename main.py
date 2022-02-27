@@ -16,7 +16,7 @@ i=0
 tcpip = 0
 joinmenu = 0
 createserver = 0
-user_text = '0000.0000.0000.0000'
+user_text = ''
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('chartreuse4')
 color = color_passive
@@ -80,14 +80,12 @@ while menuwindow:
             color = color_active
         else:
             color = color_passive
-
             # draw rectangle and argument passed which should
             # be on screen
         pygame.draw.rect(menu, color, input_rect)
 
         text_surface = font2.render(user_text, True, (255, 255, 255))
         menu.blit(text_surface, (input_rect.x, input_rect.y + 5))
-
         input_rect.w = max(230, text_surface.get_width() + 10)
     if createserver == 1 :
         text10 = font2.render('Number of players:' + str(players[i]), True, (0, 255, 0))
@@ -111,11 +109,11 @@ while menuwindow:
 
                 # get text input from 0 to -1 i.e. end.
                 user_text = user_text[:-1]
-
             # Unicode standard is used for string
             # formation
             else:
-                user_text += event1.unicode
+                if active:
+                    user_text += event1.unicode
             if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 0 and joinmenu == 0 and createserver == 0:
                 local.local()
             if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 1:
@@ -127,8 +125,8 @@ while menuwindow:
                 yc = 295
             if event1.key == pygame.K_RETURN and yc == 295 and createserver == 1:
                 server.server(players[i])
-            if event1.key == pygame.K_RETURN and yc == 295 and createserver ==0 and joinmenu == 1 and tcpip == 0:
-                Join.join("192.168.1.0")
+            if event1.key == pygame.K_RETURN and yc == 295 and joinmenu == 1 and len(user_text) > 11:
+                Join.join(user_text)
             if event1.key == pygame.K_RETURN and yc == 395 and joinmenu == 1 and tcpip == 0:
                 joinmenu = 0
                 tcpip = 1
@@ -139,7 +137,7 @@ while menuwindow:
                 tcpip = 0
                 joinmenu = 0
                 yc = 295
-            if event1.key == pygame.K_RETURN and yc == 395 and createserver == 0 and joinmenu == 0 and tcpip == 0 :
+            if event1.key == pygame.K_RETURN and yc == 395 and createserver == 0 and joinmenu == 0 and tcpip == 0:
                 tcpip = 1
             if event1.key == pygame.K_LEFT and i > 0 and yc == 395 and createserver == 1:
                 i = i - 1
