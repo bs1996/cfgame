@@ -9,7 +9,7 @@ def join(ip):
     port = 12345
 
     # connect to the server on local computer
-    s.connect(('192.168.0.166', port))
+    s.connect((ip, port))
 
     # receive data from the server and decoding to get the string.
     print(s.recv(1024).decode())
