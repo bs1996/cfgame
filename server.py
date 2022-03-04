@@ -3,7 +3,7 @@ def server(player_number):
    # next create a socket object
    s = socket.socket()
    print("Socket successfully created")
-
+   stnumber = str(player_number)
    # reserve a port on your computer in our
    # case it is 12345 but it can be anything
    port = 12345
@@ -30,9 +30,10 @@ def server(player_number):
 
       # send a thank you message to the client. encoding to send byte type.
       c.send('Thank you for connecting'.encode())
-      c.send(player_number.encode())
+      c.send((stnumber.encode()))
       print(c.recv(1024).decode())
       # Close the connection with the client
+
       c.close()
 
       # Breaking once connection closed
