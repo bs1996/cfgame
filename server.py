@@ -1,5 +1,5 @@
-import pygame,socket,numpy
-def server(player):
+import pygame,socket,numpy,Players
+def server(player_number):
    # next create a socket object
    s = socket.socket()
    print("Socket successfully created")
@@ -19,7 +19,7 @@ def server(player):
 
    # put the socket into listening mode
    s.listen(5)
-   print("socket is listening")
+   print("Waiting for players")
 
    # a forever loop until we interrupt it or
    # an error occurs
@@ -30,6 +30,7 @@ def server(player):
 
       # send a thank you message to the client. encoding to send byte type.
       c.send('Thank you for connecting'.encode())
+      c.send(player_number.encode())
       print(c.recv(1024).decode())
       # Close the connection with the client
       c.close()
