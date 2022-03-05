@@ -1,4 +1,5 @@
-import pygame,socket,numpy,Players
+import pygame,socket,numpy,Players ,threading
+from threading import Thread
 def join(ip):
     import socket
     exchange = 1
@@ -16,6 +17,7 @@ def join(ip):
         print(s.recv(1024).decode())
         s.send(message.encode())
         # close the connection
+        print('0-close 1-continue')
         input(exchange)
         if exchange == 0 :
             s.send('close'.encode())
