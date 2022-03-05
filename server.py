@@ -1,10 +1,9 @@
 import pygame,socket,numpy,Players
+
 from _thread import *
 import threading
 print_lock = threading.Lock()
 
-
-# thread function
 def threaded(c):
    while True:
 
@@ -13,9 +12,9 @@ def threaded(c):
       if not data:
          print('Bye')
 
-         # lock released on exit
-         print_lock.release()
-         break
+      # lock released on exit
+      print_lock.release()
+      break
 
       # reverse the given string from client
       data = data[::-1]
@@ -23,32 +22,26 @@ def threaded(c):
       # send back reversed string to client
       c.send(data)
 
-   # connection closed
-   c.close()
-def server(player_number):
-   # next create a socket object
-   s = socket.socket()
-   print("Socket successfully created")
-   stnumber = str(player_number)
-   # reserve a port on your computer in our
-   # case it is 12345 but it can be anything
-   port = 12345
+      # connection closed
+      c.close()
 
-   # Next bind to the port
-   # we have not typed any ip in the ip field
-   # instead we have inputted an empty string
-   # this makes the server listen to requests
-   # coming from other computers on the network
+
+def server(players_number):
+   host = ""
+   # reverse a port on your computer
+   # in our case it is 12345 but it
+   # can be anything
+   port = 12345
+   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-   s.bind(('', port))
-   print("socket binded to %s" % (port))
+   s.bind((host, port))
+   print("socket binded to port", port)
 
    # put the socket into listening mode
    s.listen(5)
-   print("Waiting for players")
+   print("socket is listening")
 
-   # a forever loop until we interrupt it or
-   # an error occurs
+   # a forever loop until client wants to exit
    while True:
       # establish connection with client
       c, addr = s.accept()
@@ -59,6 +52,9 @@ def server(player_number):
 
       # Start a new thread and return its identifier
       start_new_thread(threaded, (c,))
-
    s.close()
+
+
+
+
 
