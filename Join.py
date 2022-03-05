@@ -1,21 +1,43 @@
 import pygame,socket,numpy,Players ,threading
 from threading import Thread
 def join(ip):
-    import socket
-    exchange = 1
-    message=input('write message')
-    # Create a socket object
-    s = socket.socket()
-    # Define the port on which you want to connect
-    port = 12345
-    # connect to the server on local computer
-    s.connect((ip, port))
 
-    # receive data from the server and decoding to get the string.
-    print(s.recv(1024).decode())
-    print(s.recv(1024).decode())
-    s.send(message.encode())
-    # close the connection
-    print('0-close 1-continue')
-    s.send('close'.encode())
-    s.close()
+
+    def Main():
+        # local host IP '127.0.0.1'
+
+
+        # Define the port on which you want to connect
+        port = 12345
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        # connect to server on local computer
+        s.connect((ip, port))
+
+        # message you send to server
+        message = "shaurya says geeksforgeeks"
+        while True:
+
+            # message sent to server
+            s.send(message.encode('ascii'))
+
+            # message received from server
+            data = s.recv(1024)
+
+            # print the received message
+            # here it would be a reverse of sent message
+            print('Received from the server :', str(data.decode('ascii')))
+
+            # ask the client whether he wants to continue
+            ans = input('\nDo you want to continue(y/n) :')
+            if ans == 'y':
+                continue
+            else:
+                break
+        # close the connection
+        s.close()
+
+    if __name__ == '__main__':
+        Main()
