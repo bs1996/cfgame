@@ -1,4 +1,30 @@
 import pygame,socket,numpy,Players
+from _thread import *
+import threading
+print_lock = threading.Lock()
+
+
+# thread function
+def threaded(c):
+   while True:
+
+      # data received from client
+      data = c.recv(1024)
+      if not data:
+         print('Bye')
+
+         # lock released on exit
+         print_lock.release()
+         break
+
+      # reverse the given string from client
+      data = data[::-1]
+
+      # send back reversed string to client
+      c.send(data)
+
+   # connection closed
+   c.close()
 def server(player_number):
    # next create a socket object
    s = socket.socket()
@@ -24,17 +50,15 @@ def server(player_number):
    # a forever loop until we interrupt it or
    # an error occurs
    while True:
-      # Establish connection with client.
+      # establish connection with client
       c, addr = s.accept()
-      print('Got connection from', addr)
 
-      # send a thank you message to the client. encoding to send byte type.
-      c.send('Thank you for connecting'.encode())
-      c.send((stnumber.encode()))
-      print(c.recv(1024).decode())
-      # Close the connection with the client
+      # lock acquired by client
+      print_lock.acquire()
+      print('Connected to :', addr[0], ':', addr[1])
 
-      c.close()
+      # Start a new thread and return its identifier
+      start_new_thread(threaded, (c,))
 
-      # Breaking once connection closed
-      break
+   s.close()
+
