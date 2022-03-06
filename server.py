@@ -13,8 +13,8 @@ def threaded(c):
          print('Bye')
 
       # lock released on exit
-      print_lock.release()
-      break
+         print_lock.release()
+         break
 
       # reverse the given string from client
       data = data[::-1]
@@ -23,7 +23,7 @@ def threaded(c):
       c.send(data)
 
       # connection closed
-      c.close()
+   c.close()
 
 
 def server(players_number):
