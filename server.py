@@ -1,57 +1,34 @@
-import pygame,socket,numpy,Players
+import pygame,socket,numpy,Players,json
 
 from _thread import *
 import threading
 print_lock = threading.Lock()
 
-def threaded(c):
-   while True:
 
-      # data received from client
-      data = c.recv(1024)
-      if not data:
-         print('Bye')
 
-      # lock released on exit
-         print_lock.release()
-         break
-
-      # reverse the given string from client
-      data = data[::-1]
-
-      # send back reversed string to client
-      c.send(data)
-
-      # connection closed
-   c.close()
 
 
 def server(players_number):
-   host = ""
-   # reverse a port on your computer
-   # in our case it is 12345 but it
-   # can be anything
-   port = 12345
+   # initializing socket
    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+   host = '192.168.0.166'
+   port = 12345
+
+   # binding port and host
    s.bind((host, port))
-   print("socket binded to port", port)
 
-   # put the socket into listening mode
+   # waiting for a client to connect
    s.listen(5)
-   print("socket is listening")
-
+   number = 2
    # a forever loop until client wants to exit
    while True:
-      # establish connection with client
+      # accept connection
+      print("Waiting for " + str(players_number) + " players")
       c, addr = s.accept()
-
-      # lock acquired by client
-      print_lock.acquire()
-      print('Connected to :', addr[0], ':', addr[1])
-
-      # Start a new thread and return its identifier
-      start_new_thread(threaded, (c,))
+      print('got connection from addr', addr)
+      c.send(number)
+      Players.main(c,players_number,1)
    s.close()
 
 
