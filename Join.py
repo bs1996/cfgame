@@ -1,5 +1,7 @@
-import pygame,socket,numpy,Players ,threading
+import pygame,socket,numpy,Players ,threading,json
 from threading import Thread
+
+
 def join(ip):
 
     # Define the port on which you want to connect
@@ -12,25 +14,23 @@ def join(ip):
     s.connect((ip, port))
 
     # message you send to server
-    message = "shaurya says geeksforgeeks"
+    message = "hello"
     while True:
 
         # message sent to server
         s.send(message.encode())
 
         # message received from server
-        data = s.recv(1024)
+        player_number = s.recv(1024)
 
         # print the received message
         # here it would be a reverse of sent message
-        print('Received from the server :', str(data.decode()))
+
+
 
         # ask the client whether he wants to continue
-        ans = input()
-        if ans == 'y':
-            continue
-        else:
-            break
+        print("start")
+        Players.main(s,2,player_number)
     # close the connection
     s.close()
 
