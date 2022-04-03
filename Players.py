@@ -1,14 +1,16 @@
 import pygame, numpy,sys,Join,server,json
 
 def send (c,e) :
-    data = json.dumps(e)
-    c.send(data.encode())
+    data = json.dumps(e).encode()
+    c.send(data)
 
 def rec (c) :
     rdata = c.recv(1024).decode()
     data = json.loads(rdata)
     return data
 def GameScreen(w1,w2,w3,w4,screen):
+    print(w1)
+    print(w2)
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w1[0], w1[1], 10, 10))
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w2[0], w2[1], 10, 10))
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w3[0], w3[1], 10, 10))
@@ -56,11 +58,13 @@ def main(sock,players_number,player_number):
     screen = pygame.display.set_mode((600, 600))
     pygame.display.set_caption("cfgame")
     running = 1
+    x=0
+    y=0
     g1, g2, g3, g4 = 0, 0, 0, 0  #gameover status
-    w1 = [0,0]
-    w2 = [0,0]
-    w3 = [0,0]
-    w4 = [0,0]
+    w1 = [0.0,0.0]
+    w2 = [0.0,0.0]
+    w3 = [0.0,0.0]
+    w4 = [0.0,0.0]
     t = 0  # time
     xp = 0.5
     yp = 0
@@ -69,7 +73,7 @@ def main(sock,players_number,player_number):
     road2 = []
     road3 = []
     road4 = []
-    dat = {"number": 0, "1": 0}
+    dat = {"number": 0, "1": [0,0]}
     direction = 0
     if player_number == 1:
         x = 50
@@ -118,14 +122,17 @@ def main(sock,players_number,player_number):
             if t >= 2.0 :
                 byleco=1
                 # road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
+
         send(sock, dat)
         data = rec(sock)
         if player_number == 1 :
+            w1 = [x,y]
             dat = {"number": 1, "1": w1}
             if data["number"] == 2 :
                 w2 = data["1"]
 
         if player_number == 2 :
+            w2 = [x,y]
             dat = {"number": 2,"1": w2}
             w1=data["1"]
 
