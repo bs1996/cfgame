@@ -21,7 +21,7 @@ def join(ip):
         s.send(message.encode())
 
         # message received from server
-        player_number = s.recv(1024)
+        player_number = int(s.recv(1024).decode())
 
         # print the received message
         # here it would be a reverse of sent message
