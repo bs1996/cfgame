@@ -5,8 +5,8 @@ def send (c,e) :
     c.send(data.encode())
 
 def rec (c) :
-    recdata = c.recv(1024).decode()
-    data = json.loads(recdata)
+    rdata = c.recv(1024).decode()
+    data = json.loads(rdata)
     return data
 def GameScreen(w1,w2,w3,w4,screen):
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w1[0], w1[1], 10, 10))
@@ -57,6 +57,10 @@ def main(sock,players_number,player_number):
     pygame.display.set_caption("cfgame")
     running = 1
     g1, g2, g3, g4 = 0, 0, 0, 0  #gameover status
+    w1 = []
+    w2 = []
+    w3 = []
+    w4 = []
     t = 0  # time
     xp = 0.5
     yp = 0
@@ -65,6 +69,7 @@ def main(sock,players_number,player_number):
     road2 = []
     road3 = []
     road4 = []
+    dat={}
     direction = 0
     if player_number == 1:
         x = 50
@@ -122,17 +127,17 @@ def main(sock,players_number,player_number):
             if data["number"] == 4 :
                 w4 = data["4"]
         if player_number == 2 :
-            dat = {"number": 2,"2": w2}
+            dat = {"number": 2,"1": w1,"2": w2,"3": w3,"4": w4}
             w1=data["1"]
             w3=data["3"]
             w4=data["4"]
         if player_number == 3 :
-            dat = {"number": 3,"3": w3}
+            dat = {"number": 3,"1": w1,"2": w2,"3": w3,"4": w4}
             w1 = data["1"]
             w2 = data["2"]
             w4 = data["4"]
         if player_number == 4 :
-            dat = {"number": 4,"4": w4}
+            dat = {"number": 4,"1": w1,"2": w2,"3": w3,"4": w4}
             w1 = data["1"]
             w2 = data["2"]
             w3 = data["3"]
@@ -183,6 +188,4 @@ def main(sock,players_number,player_number):
             if event.type == pygame.QUIT:
                 # change the value to False, to exit the main loop
                 running = False
-    return w1, w2, w3, w4
-if __name__=="__main__":
-    main(1,2,1)
+
