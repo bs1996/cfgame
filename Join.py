@@ -18,7 +18,7 @@ def join(ip):
     while player_number == 10:
 
         # message sent to server
-        s.send(message.encode())
+
 
         # message received from server
         player_number = int(s.recv(1024).decode())
