@@ -22,13 +22,14 @@ def server(players_number):
    s.listen(5)
    number = '2'
    # a forever loop until client wants to exit
-   while True:
+   while players_number < 3:
       # accept connection
       print("Waiting for " + str(players_number) + " players")
       c, addr = s.accept()
       print('got connection from addr', addr)
       c.send(number.encode())
       Players.main(c,players_number,1)
+      players_number = players_number + 1
    s.close()
 
 
