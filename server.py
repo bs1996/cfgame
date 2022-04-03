@@ -27,6 +27,7 @@ def server(players_number):
       print("Waiting for " + str(players_number) + " players")
       c, addr = s.accept()
       print('got connection from addr', addr)
+
       c.send(number.encode())
       Players.main(c,players_number,1)
       players_number = players_number + 1
