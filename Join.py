@@ -12,10 +12,10 @@ def join(ip):
 
     # connect to server on local computer
     s.connect((ip, port))
-
+    player_number = 10
     # message you send to server
     message = "hello"
-    while True:
+    while player_number == 10:
 
         # message sent to server
         s.send(message.encode())
