@@ -1,4 +1,4 @@
-import pygame, numpy,sys,Players,Join,server,json
+import pygame, numpy,sys,Join,server,json
 
 def send (c,e) :
     data = json.dumps(e)
@@ -57,10 +57,10 @@ def main(sock,players_number,player_number):
     pygame.display.set_caption("cfgame")
     running = 1
     g1, g2, g3, g4 = 0, 0, 0, 0  #gameover status
-    w1 = []
-    w2 = []
-    w3 = []
-    w4 = []
+    w1 = [0,0]
+    w2 = [0,0]
+    w3 = [0,0]
+    w4 = [0,0]
     t = 0  # time
     xp = 0.5
     yp = 0
@@ -69,7 +69,7 @@ def main(sock,players_number,player_number):
     road2 = []
     road3 = []
     road4 = []
-    dat={}
+    dat = {"number": 0, "1": 0}
     direction = 0
     if player_number == 1:
         x = 50
@@ -116,32 +116,20 @@ def main(sock,players_number,player_number):
            # road3.append(w3)
            # road4.append(w4)
             if t >= 2.0 :
-                road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
+                byleco=1
+                # road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
+        send(sock, dat)
         data = rec(sock)
         if player_number == 1 :
-            dat = {"number": 1,"1": w1,"2": w2,"3": w3,"4": w4}
+            dat = {"number": 1, "1": w1}
             if data["number"] == 2 :
-                w2 = data["2"]
-            if data["number"] == 3 :
-                w3 = data["3"]
-            if data["number"] == 4 :
-                w4 = data["4"]
+                w2 = data["1"]
+
         if player_number == 2 :
-            dat = {"number": 2,"1": w1,"2": w2,"3": w3,"4": w4}
+            dat = {"number": 2,"1": w2}
             w1=data["1"]
-            w3=data["3"]
-            w4=data["4"]
-        if player_number == 3 :
-            dat = {"number": 3,"1": w1,"2": w2,"3": w3,"4": w4}
-            w1 = data["1"]
-            w2 = data["2"]
-            w4 = data["4"]
-        if player_number == 4 :
-            dat = {"number": 4,"1": w1,"2": w2,"3": w3,"4": w4}
-            w1 = data["1"]
-            w2 = data["2"]
-            w3 = data["3"]
-        send(sock,dat)
+
+
         GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
         ######### BUTTONS ##########################
