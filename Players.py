@@ -12,7 +12,7 @@ def GameScreen(w1,w2,w3,w4,screen):
     print(w1)
     print(w2)
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w1[0], w1[1], 10, 10))
-    pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w2[0], w2[1], 10, 10))
+    pygame.draw.rect(screen, pygame.Color(50, 255, 50), pygame.Rect(w2[0], w2[1], 10, 10))
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w3[0], w3[1], 10, 10))
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w4[0], w4[1], 10, 10))
     pygame.display.update()
@@ -73,7 +73,7 @@ def main(sock,players_number,player_number):
     road2 = []
     road3 = []
     road4 = []
-    dat = {"number": 0, "1": [0,0]}
+    dat = {"number": 0, "1": [0,0],"g2": g2}
     direction = 0
     if player_number == 1:
         x = 50
@@ -142,7 +142,7 @@ def main(sock,players_number,player_number):
 
         if player_number == 2:
             w2 = [x,y]
-            dat = {"number": 2,"1": w2}
+            dat = {"number": 2,"1": w2, "g2": g2}
             w1 = data["1"]
             g2 = data["g2"]
 
