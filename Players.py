@@ -25,14 +25,14 @@ def check_collision(r1,r2,r3,r4,p1,p2,p3,p4,g1,g2,g3,g4,loss):
         if numpy.array_equal(i, p1) and g1 == 0:
             loss = loss +1
             g1 = 1
-            print('gameover')
+            print('gameover1')
           #  screen.blit(text1, textRect1)
 
     for j in r2:
         if numpy.array_equal(j, p1) and g1 == 0:
             g1 = 1
             loss = loss + 1
-            print('gameover')
+            print('gameover1')
           #  screen.blit(text1, textRect1)
 
     for i in r2[0:-1]:
@@ -40,17 +40,17 @@ def check_collision(r1,r2,r3,r4,p1,p2,p3,p4,g1,g2,g3,g4,loss):
             g2 = 1
             loss = loss + 1
 
-            print('test')
+            print('GAMEOVER2')
            # screen.blit(text2, textRect2)
 
     for j in r1:
         if numpy.array_equal(j, p2) and g2 ==0:
             g2 = 1
             loss = loss + 1
-            print('test')
+            print('GAMEOVER2')
            # screen.blit(text2, textRect2)
 
-    return r1,r2,r3,r4,p1,p2,p3,p4,g1,g2,g3,g4,loss
+    return g1,g2,loss
 def main(sock,players_number,player_number):
     pygame.init()
     pygame.font.init()
@@ -60,7 +60,7 @@ def main(sock,players_number,player_number):
     running = 1
     x=0
     y=0
-    g1, g2, g3, g4 = 0, 0, 0, 0  #gameover status
+    g1, g2, g3, g4, p1, p2, p3, p4 = 0, 0, 0, 0, 0, 0, 0, 0  #gameover status
     w1 = [0.0,0.0]
     w2 = [0.0,0.0]
     w3 = [0.0,0.0]
@@ -92,19 +92,29 @@ def main(sock,players_number,player_number):
         y = 550
         w4 = [x, y]
     while running == 1:
-        if g1 == 0:
+        if (g1 == 0 and player_number == 1) or (g2 == 0 and player_number == 2):
             x = x + xp
             y = y + yp
         if loss == 3:
             running = 0
-        if direction == 0:
-            p1 = numpy.array([x + 10, y])
-        if direction == 3:
-            p1 = numpy.array([x - 10, y])
-        if direction == 1:
-            p1 = numpy.array([x, y + 10])
-        if direction == 2:
-            p1 = numpy.array([x, y - 10])
+        if player_number == 1:
+            if direction == 0:
+                p1 = numpy.array([x + 10, y])
+            if direction == 3:
+                p1 = numpy.array([x - 10, y])
+            if direction == 1:
+                p1 = numpy.array([x, y + 10])
+            if direction == 2:
+                p1 = numpy.array([x, y - 10])
+
+            if direction == 0:
+                p2 = numpy.array([w2[0] + 10, w2[1]])
+            if direction == 3:
+                p2 = numpy.array([w2[0] - 10, w2[1]])
+            if direction == 1:
+                p2 = numpy.array([w2[0], w2[1] + 10])
+            if direction == 2:
+                p2 = numpy.array([w2[0], w2[1] - 10])
 
         if x >= 600 and direction == 0:
             x = 0
@@ -116,26 +126,25 @@ def main(sock,players_number,player_number):
             y = 600
         if player_number == 1:
             road1.append(w1)
-           # road2.append(w2)
-           # road3.append(w3)
-           # road4.append(w4)
+            road2.append(w2)
+            road3.append(w3)
+            road4.append(w4)
             if t >= 2.0 :
-                byleco=1
-                # road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
+                g1,g2,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
 
         send(sock, dat)
         data = rec(sock)
-        if player_number == 1 :
+        if player_number == 1:
             w1 = [x,y]
-            dat = {"number": 1, "1": w1}
-            if data["number"] == 2 :
+            dat = {"number": 1, "1": w1, "g2": g2}
+            if data["number"] == 2:
                 w2 = data["1"]
 
-        if player_number == 2 :
+        if player_number == 2:
             w2 = [x,y]
             dat = {"number": 2,"1": w2}
-            w1=data["1"]
-
+            w1 = data["1"]
+            g2 = data["g2"]
 
         GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
