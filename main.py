@@ -16,6 +16,7 @@ i=0
 tcpip = 0
 joinmenu = 0
 createserver = 0
+
 user_text = ''
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('chartreuse4')
@@ -32,6 +33,7 @@ text6 = font2.render('back', True, (0, 255, 0))
 text7 = font2.render('Server IP :', True, (0, 255, 0))
 text8 = font2.render('Connect', True, (0, 255, 0))
 text9 = font2.render('Start', True, (0, 255, 0))
+
 
 input_rect = pygame.Rect(230, 180, 400, 32)
 textRect1 = text1.get_rect()
@@ -125,8 +127,12 @@ while menuwindow:
                 yc = 295
             if event1.key == pygame.K_RETURN and yc == 295 and createserver == 1:
                 server.server(players[i])
+
+
             if event1.key == pygame.K_RETURN and yc == 295 and joinmenu == 1 and len(user_text) > 11:
                 Join.join(user_text)
+
+
             if event1.key == pygame.K_RETURN and yc == 395 and joinmenu == 1 and tcpip == 0:
                 joinmenu = 0
                 tcpip = 1
