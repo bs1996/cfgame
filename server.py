@@ -10,6 +10,15 @@ print_lock = threading.Lock()
 
 def server(players_number):
    # initializing socket
+   pygame.font.init()
+   pygame.font.get_init()
+   menu = pygame.display.set_mode((600, 600))
+   font1 = pygame.font.SysFont('chalkduster.ttf', 70)
+   text1 = font1.render('waiting for ' + str(players_number) + ' players ', True, (0, 255, 0))
+   textRect1 = text1.get_rect()
+   textRect1.center = (300, 100)
+   menu.blit(text1, textRect1)
+   pygame.display.update()
    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
    host = '192.168.0.166'
@@ -21,8 +30,9 @@ def server(players_number):
    # waiting for a client to connect
    s.listen(5)
    number = '2'
+
    # a forever loop until client wants to exit
-   while players_number < 3:
+   while players_number < 5:
       # accept connection
       print("Waiting for " + str(players_number) + " players")
       c, addr = s.accept()
