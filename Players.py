@@ -9,8 +9,6 @@ def rec (c) :
     data = json.loads(rdata)
     return data
 def GameScreen(w1,w2,w3,w4,screen):
-    print(w1)
-    print(w2)
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w1[0], w1[1], 10, 10))
     pygame.draw.rect(screen, pygame.Color(50, 255, 50), pygame.Rect(w2[0], w2[1], 10, 10))
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w3[0], w3[1], 10, 10))
@@ -35,7 +33,7 @@ def check_collision(r1,r2,r3,r4,p1,p2,p3,p4,g1,g2,g3,g4,loss):
             print('gameover1')
           #  screen.blit(text1, textRect1)
 
-    for i in r2[0:-1]:
+    for i in r2:
         if numpy.array_equal(i, p2) and g2 ==0:
             g2 = 1
             loss = loss + 1
@@ -60,11 +58,13 @@ def main(sock,players_number,player_number):
     running = 1
     x=0
     y=0
-    g1, g2, g3, g4, p1, p2, p3, p4 = 0, 0, 0, 0, 0, 0, 0, 0  #gameover status
+    g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
     w1 = [0.0,0.0]
     w2 = [0.0,0.0]
     w3 = [0.0,0.0]
     w4 = [0.0,0.0]
+    p3 = 0
+    p4 = 0
     t = 0  # time
     xp = 0.5
     yp = 0
@@ -75,6 +75,7 @@ def main(sock,players_number,player_number):
     road4 = []
     dat = {"number": 0, "1": [0,0],"g2": g2}
     direction = 0
+    direction2 = 0
     if player_number == 1:
         x = 50
         y = 50
@@ -107,15 +108,16 @@ def main(sock,players_number,player_number):
             if direction == 2:
                 p1 = numpy.array([x, y - 10])
 
-            if direction == 0:
+            if direction2 == 0:
                 p2 = numpy.array([w2[0] + 10, w2[1]])
-            if direction == 3:
+            if direction2 == 3:
                 p2 = numpy.array([w2[0] - 10, w2[1]])
-            if direction == 1:
-                p2 = numpy.array([w2[0], w2[1] + 10])
-            if direction == 2:
+            if direction2 == 1:
+                p2 = numpy.array([w2[0], w2[1]+10])
+            if direction2 == 2:
                 p2 = numpy.array([w2[0], w2[1] - 10])
-
+        print(road2)
+        print(p2)
         if x >= 600 and direction == 0:
             x = 0
         if x <= 0 and direction == 3:
@@ -129,22 +131,25 @@ def main(sock,players_number,player_number):
             road2.append(w2)
             road3.append(w3)
             road4.append(w4)
-            if t >= 2.0 :
+
+            if t >= 1.0 :
                 g1,g2,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
 
         send(sock, dat)
         data = rec(sock)
         if player_number == 1:
             w1 = [x,y]
-            dat = {"number": 1, "1": w1, "g2": g2}
+            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction}
             if data["number"] == 2:
                 w2 = data["1"]
-
+                direction2 = data["dir"]
         if player_number == 2:
             w2 = [x,y]
-            dat = {"number": 2,"1": w2, "g2": g2}
+            direction2 = direction
+            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2}
             w1 = data["1"]
             g2 = data["g2"]
+
 
         GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
