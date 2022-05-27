@@ -53,7 +53,7 @@ def main(sock,players_number,player_number):
     pygame.init()
     pygame.font.init()
     pygame.font.get_init()
-    screen = pygame.display.set_mode((600, 600))
+    screen = pygame.display.set_mode((600, 900))
     pygame.display.set_caption("cfgame")
     running = 1
     x=0
@@ -116,8 +116,7 @@ def main(sock,players_number,player_number):
                 p2 = numpy.array([w2[0], w2[1]+10])
             if direction2 == 2:
                 p2 = numpy.array([w2[0], w2[1] - 10])
-        print(road2)
-        print(p2)
+
         if x >= 600 and direction == 0:
             x = 0
         if x <= 0 and direction == 3:
