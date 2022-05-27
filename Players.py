@@ -58,6 +58,12 @@ def main(sock,players_number,player_number):
     running = 1
     x=0
     y=0
+    chat = []
+    usermessage = ''
+    color_active = pygame.Color('lightskyblue3')
+    color_passive = pygame.Color('chartreuse4')
+    color = color_passive
+    active = False
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
     w1 = [0.0,0.0]
     w2 = [0.0,0.0]
@@ -93,6 +99,19 @@ def main(sock,players_number,player_number):
         y = 550
         w4 = [x, y]
     while running == 1:
+        if active:
+            color = color_active
+        else:
+            color = color_passive
+            # draw rectangle and argument passed which should
+            # be on screen
+        font2 = pygame.font.SysFont('chalkduster.ttf', 40)
+
+        input_rect = pygame.Rect(0, 650, 600, 100)
+        pygame.draw.rect(screen, color, input_rect)
+        text_surface = font2.render(usermessage, True, (255, 255, 255))
+        screen.blit(text_surface, (input_rect.x, input_rect.y + 5))
+        input_rect.w = max(230, text_surface.get_width() + 10)
         if (g1 == 0 and player_number == 1) or (g2 == 0 and player_number == 2):
             x = x + xp
             y = y + yp
@@ -155,7 +174,16 @@ def main(sock,players_number,player_number):
         ######### BUTTONS ##########################
 
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if input_rect.collidepoint(event.pos):
+                    active = True
+                else:
+                    active = False
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    if active:
+                        # get text input from 0 to -1 i.e. end.
+                        usermessage = usermessage[:-1]
                 if event.key == pygame.K_DOWN and direction == 0:
                     xp = 0.0
                     yp = 1
