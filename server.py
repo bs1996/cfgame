@@ -8,7 +8,7 @@ print_lock = threading.Lock()
 
 
 
-def server(players_number):
+def server(players_number, nickname):
    # initializing socket
    pygame.font.init()
    pygame.font.get_init()
