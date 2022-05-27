@@ -2,8 +2,7 @@ import pygame,socket,numpy,Players ,threading,json
 from threading import Thread
 
 
-def join(ip):
-
+def join(ip, nickname):
     # Define the port on which you want to connect
     pygame.font.init()
     pygame.font.get_init()
