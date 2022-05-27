@@ -19,12 +19,15 @@ createserver = 0
 
 user_text = ''
 nickname = ''
+nickname2 = ''
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('chartreuse4')
 color = color_passive
 color2 = color_passive
+color3 = color_passive
 active1 = False
 active2 = False
+active3 = False
 font1 = pygame.font.SysFont('chalkduster.ttf', 70)
 font2 = pygame.font.SysFont('chalkduster.ttf', 40)
 text1 = font1.render('Menu', True, (0, 255, 0))
@@ -119,16 +122,16 @@ while menuwindow:
         menu.blit(text10, textRect11)
         menu.blit(text9, textRect12)
         menu.blit(text12, textRect16)
-        if active2:
-            color2 = color_active
+        if active3:
+            color3 = color_active
         else:
-            color2 = color_passive
+            color3 = color_passive
             # draw rectangle and argument passed which should
             # be on screen
 
-        pygame.draw.rect(menu, color2, input_rect3)
+        pygame.draw.rect(menu, color3, input_rect3)
 
-        text_surface3 = font2.render(nickname, True, (255, 255, 255))
+        text_surface3 = font2.render(nickname2, True, (255, 255, 255))
         menu.blit(text_surface3, (input_rect3.x, input_rect3.y + 5))
         input_rect3.w = max(230, text_surface3.get_width() + 10)
     choice = pygame.draw.rect(menu, pygame.Color(0, 255, 0), pygame.Rect(xc, yc, 10, 10))
@@ -144,9 +147,9 @@ while menuwindow:
             else:
                 active2 = False
             if input_rect3.collidepoint(event1.pos):
-                active2 = True
+                active3 = True
             else:
-                active2 = False
+                active3 = False
         if event1.type == pygame.KEYDOWN:
             # Check for backspace
             if event1.key == pygame.K_BACKSPACE:
@@ -155,6 +158,8 @@ while menuwindow:
                     user_text = user_text[:-1]
                 if active2:
                     nickname = nickname[:-1]
+                if active3:
+                    nickname2 = nickname2[:-1]
             # Unicode standard is used for string
             # formation
             else:
@@ -162,6 +167,8 @@ while menuwindow:
                     user_text += event1.unicode
                 if active2:
                     nickname += event1.unicode
+                if active3:
+                    nickname2 += event1.unicode
             if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 0 and joinmenu == 0 and createserver == 0:
                 local.local()
             if event1.key == pygame.K_RETURN and yc == 295 and tcpip == 1:
