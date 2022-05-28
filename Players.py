@@ -1,37 +1,42 @@
 import pygame, numpy,sys,Join,server,json
 chat =''
-usermessage = ''
-sendmessage = '     send'
+user_message = ''
+send_message = '     send'
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('chartreuse4')
 color = color_passive
 color2 = pygame.Color(100, 0, 0)
 color3 = pygame.Color(100, 100, 100)
 active = False
-def send (c,e) :
+
+
+def send(c, e):
     data = json.dumps(e).encode()
     c.send(data)
 
-def rec (c) :
+
+def rec(c):
     rdata = c.recv(1024).decode()
     data = json.loads(rdata)
     return data
-def GameScreen(w1,w2,w3,w4,screen):
+
+
+def GameScreen(w1, w2, w3, w4, screen):
     font3 = pygame.font.SysFont('chalkduster.ttf', 20)
-    chatrect = pygame.Rect(0, 505, 600, 50)
-    sendrect = pygame.Rect(530, 555, 70, 50)
+    chat_rect = pygame.Rect(0, 505, 600, 50)
+    send_rect = pygame.Rect(530, 555, 70, 50)
     input_rect = pygame.Rect(0, 555, 600, 50)
     pygame.draw.rect(screen, color, input_rect)
-    pygame.draw.rect(screen, color2, chatrect)
-    pygame.draw.rect(screen, color3, sendrect)
+    pygame.draw.rect(screen, color2, chat_rect)
+    pygame.draw.rect(screen, color3, send_rect)
 
-    text_surface = font3.render(usermessage, True, (255, 255, 255))
+    text_surface = font3.render(user_message, True, (255, 255, 255))
     text_surface2 = font3.render(chat, True, (255, 255, 255))
-    text_surface3 = font3.render(sendmessage, True, (255, 255, 255))
+    text_surface3 = font3.render(send_message, True, (255, 255, 255))
 
     screen.blit(text_surface, (input_rect.x, input_rect.y + 5))
-    screen.blit(text_surface2, (chatrect.x, chatrect.y + 5))
-    screen.blit(text_surface3, (sendrect.x, sendrect.y + 5))
+    screen.blit(text_surface2, (chat_rect.x, chat_rect.y + 5))
+    screen.blit(text_surface3, (send_rect.x, send_rect.y + 5))
 
     input_rect.w = max(230, text_surface.get_width() + 10)
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w1[0], w1[1], 10, 10))
@@ -41,9 +46,10 @@ def GameScreen(w1,w2,w3,w4,screen):
     pygame.display.update()
     clock = pygame.time.Clock()
     clock.tick(100)
-    return input_rect
+    return input_rect, send_rect
 
-def check_collision(r1,r2,r3,r4,p1,p2,p3,p4,g1,g2,g3,g4,loss):
+
+def check_collision(r1, r2, r3, r4, p1, p2, p3, p4, g1, g2, g3, g4, loss):
     for i in r1:
         if numpy.array_equal(i, p1) and g1 == 0:
             loss = loss +1
@@ -74,7 +80,9 @@ def check_collision(r1,r2,r3,r4,p1,p2,p3,p4,g1,g2,g3,g4,loss):
            # screen.blit(text2, textRect2)
 
     return g1,g2,loss
-def main(sock,players_number,player_number):
+
+
+def main(sock, players_number, player_number):
     pygame.init()
     pygame.font.init()
     pygame.font.get_init()
@@ -83,8 +91,8 @@ def main(sock,players_number,player_number):
     running = 1
     global active
     global color
-    global usermessage
-
+    global user_message
+    global chat
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -92,6 +100,8 @@ def main(sock,players_number,player_number):
     w2 = [0.0,0.0]
     w3 = [0.0,0.0]
     w4 = [0.0,0.0]
+    p1 = 0
+    p2 = 0
     p3 = 0
     p4 = 0
     t = 0  # time
@@ -151,7 +161,13 @@ def main(sock,players_number,player_number):
                 p2 = numpy.array([w2[0], w2[1]+10])
             if direction2 == 2:
                 p2 = numpy.array([w2[0], w2[1] - 10])
+            road1.append(w1)
+            road2.append(w2)
+            road3.append(w3)
+            road4.append(w4)
 
+            if t >= 1.0:
+                g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
         if x >= 600 and direction == 0:
             x = 0
         if x <= 0 and direction == 3:
@@ -160,31 +176,24 @@ def main(sock,players_number,player_number):
             y = 0
         if y <= 0 and direction == 2:
             y = 500
-        if player_number == 1:
-            road1.append(w1)
-            road2.append(w2)
-            road3.append(w3)
-            road4.append(w4)
-
-            if t >= 1.0 :
-                g1,g2,loss = check_collision(road1,road2,road3,road4,p1,p2,p3,p4,g1,g2,g3,g4,loss)
 
         send(sock, dat)
         data = rec(sock)
         if player_number == 1:
-            w1 = [x,y]
-            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction}
+            w1 = [x, y]
+            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat}
             if data["number"] == 2:
                 w2 = data["1"]
                 direction2 = data["dir"]
+                chat = data["chat"]
         if player_number == 2:
-            w2 = [x,y]
+            w2 = [x, y]
             direction2 = direction
-            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2}
+            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2, "chat":chat}
             w1 = data["1"]
             g2 = data["g2"]
-
-        input_rect = GameScreen(w1,w2,w3,w4,screen)
+            chat = data["chat"]
+        input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
         ######### BUTTONS ##########################
 
@@ -194,14 +203,18 @@ def main(sock,players_number,player_number):
                     active = True
                 else:
                     active = False
+                if send_rect.collidepoint(event.pos):
+                    chat = user_message
+                    user_message = ''
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     if active:
                         # get text input from 0 to -1 i.e. end.
-                        usermessage = usermessage[:-1]
+                        user_message = user_message[:-1]
                 else:
                     if active:
-                        usermessage += event.unicode
+                        user_message += event.unicode
                 if event.key == pygame.K_DOWN and direction == 0:
                     xp = 0.0
                     yp = 1
