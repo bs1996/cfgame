@@ -1,5 +1,6 @@
 import pygame, numpy,sys,Join,server,json
-chat =''
+chat = ''
+chatbox = []
 user_message = ''
 send_message = '     send'
 color_active = pygame.Color('lightskyblue3')
@@ -8,14 +9,6 @@ color = color_passive
 color2 = pygame.Color(100, 0, 0)
 color3 = pygame.Color(100, 100, 100)
 active = False
-def sendmess(c,message):
-    c.send(message.encode())
-
-
-def recmessage(c):
-    message = c.recv(1024).decode()
-    return message
-
 
 def send(c, e):
     data = json.dumps(e).encode()
@@ -101,6 +94,7 @@ def main(sock, players_number, player_number):
     global color
     global user_message
     global chat
+    global chatbox
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -122,7 +116,8 @@ def main(sock, players_number, player_number):
     road4 = []
     direction = 0
     direction2 = 0
-    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction}
+    add = 0
+    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add}
 
     if player_number == 1:
         x = 50
@@ -174,7 +169,6 @@ def main(sock, players_number, player_number):
             road2.append(w2)
             road3.append(w3)
             road4.append(w4)
-
             if t >= 1.0:
                 g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
         if x >= 600 and direction == 0:
@@ -185,21 +179,26 @@ def main(sock, players_number, player_number):
             y = 0
         if y <= 0 and direction == 2:
             y = 500
-        chat = recmessage(sock)
-        send(sock, dat)
         data = rec(sock)
         if player_number == 1:
             w1 = [x, y]
-            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction}
+            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add}
             if data["number"] == 2:
                 w2 = data["1"]
                 direction2 = data["dir"]
+                if data["add"] == 1:
+                    chatbox.append(data["chat"])
         if player_number == 2:
             w2 = [x, y]
             direction2 = direction
-            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2,}
+            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2, "chat": chat, "add": add}
             w1 = data["1"]
             g2 = data["g2"]
+            if data["add"] == 1:
+                chatbox.append(data["chat"])
+                print(chatbox)
+        send(sock, dat)
+        add = 0
         input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
         ######### BUTTONS ##########################
@@ -213,7 +212,8 @@ def main(sock, players_number, player_number):
                 if send_rect.collidepoint(event.pos):
                     chat = user_message
                     user_message = ''
-                    sendmess(sock, chat)
+                    chatbox.append(chat)
+                    add = 1
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     if active:
