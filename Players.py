@@ -8,10 +8,18 @@ color = color_passive
 color2 = pygame.Color(100, 0, 0)
 color3 = pygame.Color(100, 100, 100)
 active = False
+def sendmess(c,message):
+    c.send(message.encode())
+
+
+def recmessage(c):
+    message = c.recv(1024).decode()
+    return message
 
 
 def send(c, e):
     data = json.dumps(e).encode()
+    print(data)
     c.send(data)
 
 
@@ -112,9 +120,10 @@ def main(sock, players_number, player_number):
     road2 = []
     road3 = []
     road4 = []
-    dat = {"number": 0, "1": [0,0],"g2": g2}
     direction = 0
     direction2 = 0
+    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction}
+
     if player_number == 1:
         x = 50
         y = 50
@@ -176,23 +185,21 @@ def main(sock, players_number, player_number):
             y = 0
         if y <= 0 and direction == 2:
             y = 500
-
+        chat = recmessage(sock)
         send(sock, dat)
         data = rec(sock)
         if player_number == 1:
             w1 = [x, y]
-            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat}
+            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction}
             if data["number"] == 2:
                 w2 = data["1"]
                 direction2 = data["dir"]
-                chat = data["chat"]
         if player_number == 2:
             w2 = [x, y]
             direction2 = direction
-            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2, "chat":chat}
+            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2,}
             w1 = data["1"]
             g2 = data["g2"]
-            chat = data["chat"]
         input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
         ######### BUTTONS ##########################
@@ -206,7 +213,7 @@ def main(sock, players_number, player_number):
                 if send_rect.collidepoint(event.pos):
                     chat = user_message
                     user_message = ''
-
+                    sendmess(sock, chat)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
                     if active:
