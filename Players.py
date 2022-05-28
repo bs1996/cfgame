@@ -9,10 +9,10 @@ color = color_passive
 color2 = pygame.Color(100, 0, 0)
 color3 = pygame.Color(100, 100, 100)
 active = False
-
+lastmessage1 = ''
+lastmessage2 = ''
 def send(c, e):
     data = json.dumps(e).encode()
-    print(data)
     c.send(data)
 
 
@@ -23,21 +23,27 @@ def rec(c):
 
 
 def GameScreen(w1, w2, w3, w4, screen):
+    global lastmessage1
+    global lastmessage2
     font3 = pygame.font.SysFont('chalkduster.ttf', 20)
-    chat_rect = pygame.Rect(0, 505, 600, 50)
+    chat_rect = pygame.Rect(0, 505, 600, 25)
+    chat_rect2 = pygame.Rect(0, 530, 600, 25)
     send_rect = pygame.Rect(530, 555, 70, 50)
     input_rect = pygame.Rect(0, 555, 600, 50)
     pygame.draw.rect(screen, color, input_rect)
     pygame.draw.rect(screen, color2, chat_rect)
+    pygame.draw.rect(screen, color2, chat_rect2)
     pygame.draw.rect(screen, color3, send_rect)
 
     text_surface = font3.render(user_message, True, (255, 255, 255))
-    text_surface2 = font3.render(chat, True, (255, 255, 255))
+    text_surface2 = font3.render(lastmessage2, True, (255, 255, 255))
+    text_surface4 = font3.render(lastmessage1, True, (255, 255, 255))
     text_surface3 = font3.render(send_message, True, (255, 255, 255))
 
     screen.blit(text_surface, (input_rect.x, input_rect.y + 5))
     screen.blit(text_surface2, (chat_rect.x, chat_rect.y + 5))
     screen.blit(text_surface3, (send_rect.x, send_rect.y + 5))
+    screen.blit(text_surface4, (chat_rect2.x, chat_rect2.y + 5))
 
     input_rect.w = max(230, text_surface.get_width() + 10)
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w1[0], w1[1], 10, 10))
@@ -95,6 +101,8 @@ def main(sock, players_number, player_number):
     global user_message
     global chat
     global chatbox
+    global lastmessage1
+    global lastmessage2
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -118,7 +126,6 @@ def main(sock, players_number, player_number):
     direction2 = 0
     add = 0
     dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add}
-
     if player_number == 1:
         x = 50
         y = 50
@@ -179,6 +186,7 @@ def main(sock, players_number, player_number):
             y = 0
         if y <= 0 and direction == 2:
             y = 500
+        send(sock, dat)
         data = rec(sock)
         if player_number == 1:
             w1 = [x, y]
@@ -196,13 +204,16 @@ def main(sock, players_number, player_number):
             g2 = data["g2"]
             if data["add"] == 1:
                 chatbox.append(data["chat"])
-                print(chatbox)
-        send(sock, dat)
+
         add = 0
+        if len(chatbox) > 1:
+            lastmessage2 = chatbox[-2]
+            lastmessage1 = chatbox[-1]
+        if len(chatbox) == 1:
+            lastmessage1 = chatbox[0]
         input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen)
         t = t + 0.01
         ######### BUTTONS ##########################
-
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if input_rect.collidepoint(event.pos):
