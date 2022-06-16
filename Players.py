@@ -89,7 +89,7 @@ def check_collision(r1, r2, r3, r4, p1, p2, p3, p4, g1, g2, g3, g4, loss):
     return g1,g2,loss
 
 
-def main(sock, players_number, player_number):
+def main(sock, players_number, player_number,nick):
     pygame.init()
     pygame.font.init()
     pygame.font.get_init()
@@ -221,7 +221,7 @@ def main(sock, players_number, player_number):
                 else:
                     active = False
                 if send_rect.collidepoint(event.pos):
-                    chat = user_message
+                    chat = nick + ': ' + user_message
                     user_message = ''
                     chatbox.append(chat)
                     add = 1
