@@ -38,7 +38,7 @@ def join(ip, nickname):
 
         # ask the client whether he wants to continue
         print("start")
-        Players.main(s,2,player_number)
+        Players.main(s,2,player_number,nickname)
     # close the connection
     s.close()
 
