@@ -39,7 +39,7 @@ def server(players_number, nickname):
       print('got connection from addr', addr)
 
       c.send(number.encode())
-      Players.main(c,players_number,1)
+      Players.main(c,players_number,1,nickname)
       players_number = players_number + 1
    s.close()
 
