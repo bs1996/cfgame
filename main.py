@@ -180,7 +180,7 @@ while menuwindow:
                 tcpip = 1
                 yc = 295
             if event1.key == pygame.K_RETURN and yc == 295 and createserver == 1:
-                server.server(players[i], nickname)
+                server.server(players[i], nickname2)
 
 
             if event1.key == pygame.K_RETURN and yc == 395 and joinmenu == 1 and len(user_text) > 11:
