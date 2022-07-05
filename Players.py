@@ -1,4 +1,4 @@
-import pygame, numpy,sys,Join,server,json
+import pygame, numpy,sys,Join,server,json,random
 chat = ''
 chatbox = []
 user_message = ''
@@ -11,6 +11,44 @@ color3 = pygame.Color(100, 100, 100)
 active = False
 lastmessage1 = ''
 lastmessage2 = ''
+
+
+class bonus():
+
+    def __init__(self, nr):
+        self.nbr = nr
+        self.result = 0
+        self.xb = random.randint(0, 600)
+        self.yb = random.randint(0, 600)
+        self.bonus_id = random.randint(1, 3)
+        if self.bonus_id == 1:
+            self.colorb = [255, 255, 255]
+        if self.bonus_id == 2:
+            self.colorb = [138, 69, 0]
+        if self.bonus_id == 3:
+            self.colorb = [135, 101, 249]
+    def bonus_icon(self, screen):
+        self.bonus = pygame.draw.circle(screen, self.colorb, [self.xb, self.yb], 5)
+
+    def checkposistion(self, p1, p2, screen):
+        x1 = self.xb
+        y1 = self.yb
+        if self.result == 0:
+            for i in range(-5, 5, 1):
+                for j in range(-5, 5, 1):
+                    if numpy.array_equal([x1+i, y1+j], p1):
+                        self.result = 1
+                        self.icon2 = pygame.draw.circle(screen, [0, 0, 0], [self.xb, self.yb], 5)
+            for i in range(-5, 5, 1):
+                for j in range(-5, 5, 1):
+                    if numpy.array_equal([x1+i, y1+j], p2):
+                        self.result = 2
+                        self.icon3 = pygame.draw.circle(screen, [0, 0, 0], [self.xb, self.yb], 5)
+        result_return = self.result
+        bon_id = self.bonus_id
+        return result_return, bon_id
+
+
 def send(c, e):
     data = json.dumps(e).encode()
     c.send(data)
@@ -22,9 +60,10 @@ def rec(c):
     return data
 
 
-def GameScreen(w1, w2, w3, w4, screen):
+def GameScreen(w1, w2, w3, w4, screen,i):
     global lastmessage1
     global lastmessage2
+
     font3 = pygame.font.SysFont('chalkduster.ttf', 20)
     chat_rect = pygame.Rect(0, 505, 600, 25)
     chat_rect2 = pygame.Rect(0, 530, 600, 25)
@@ -61,14 +100,14 @@ def check_collision(r1, r2, r3, r4, p1, p2, p3, p4, g1, g2, g3, g4, loss):
         if numpy.array_equal(i, p1) and g1 == 0:
             loss = loss +1
             g1 = 1
-            print('gameover1')
+
           #  screen.blit(text1, textRect1)
 
     for j in r2:
         if numpy.array_equal(j, p1) and g1 == 0:
             g1 = 1
             loss = loss + 1
-            print('gameover1')
+
           #  screen.blit(text1, textRect1)
 
     for i in r2:
@@ -76,16 +115,15 @@ def check_collision(r1, r2, r3, r4, p1, p2, p3, p4, g1, g2, g3, g4, loss):
             g2 = 1
             loss = loss + 1
 
-            print('GAMEOVER2')
+
            # screen.blit(text2, textRect2)
 
     for j in r1:
         if numpy.array_equal(j, p2) and g2 ==0:
             g2 = 1
             loss = loss + 1
-            print('GAMEOVER2')
-           # screen.blit(text2, textRect2)
 
+           # screen.blit(text2, textRect2)
     return g1,g2,loss
 
 
@@ -96,6 +134,7 @@ def main(sock, players_number, player_number,nick):
     screen = pygame.display.set_mode((600, 600))
     pygame.display.set_caption("cfgame")
     running = 1
+    i = 0
     global active
     global color
     global user_message
@@ -103,6 +142,10 @@ def main(sock, players_number, player_number,nick):
     global chatbox
     global lastmessage1
     global lastmessage2
+    bon1, bon2, r1, r2 = 0, 0, 0, 0
+    bonnum = 0
+    respnum = 0
+    bonuses = []
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -115,7 +158,7 @@ def main(sock, players_number, player_number,nick):
     p3 = 0
     p4 = 0
     t = 0  # time
-    xp = 0.5
+    xp = 1
     yp = 0
     loss = 0
     road1 = []
@@ -125,7 +168,7 @@ def main(sock, players_number, player_number,nick):
     direction = 0
     direction2 = 0
     add = 0
-    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add}
+    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add, "bonus": 0, "res": 0}
     if player_number == 1:
         x = 50
         y = 50
@@ -190,7 +233,7 @@ def main(sock, players_number, player_number,nick):
         data = rec(sock)
         if player_number == 1:
             w1 = [x, y]
-            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add}
+            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add, "bonus": bon2, "res": r2}
             if data["number"] == 2:
                 w2 = data["1"]
                 direction2 = data["dir"]
@@ -199,7 +242,9 @@ def main(sock, players_number, player_number,nick):
         if player_number == 2:
             w2 = [x, y]
             direction2 = direction
-            dat = {"number": 2,"1": w2, "g2": 0, "dir": direction2, "chat": chat, "add": add}
+            dat = {"number": 2, "1": w2, "g2": 0, "dir": direction2, "chat": chat, "add": add, "bonus": 0, "res": 0}
+            bon2 = data["bonus"]
+            r2 = data["res"]
             w1 = data["1"]
             g2 = data["g2"]
             if data["add"] == 1:
@@ -211,8 +256,32 @@ def main(sock, players_number, player_number,nick):
             lastmessage1 = chatbox[-1]
         if len(chatbox) == 1:
             lastmessage1 = chatbox[0]
-        input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen)
+
+        # ====================BONUSES========================
+
+        if i > 500 and player_number == 1:
+            i = 0
+        else:
+            i = i + 1
+        if i == 500:
+            bonuses.append(bonus(bonnum))
+            bonuses[bonnum].bonus_icon(screen)
+            i = 0
+            bonnum = bonnum + 1
+            respnum = respnum + 1
+        if respnum > 0:
+            for obj in bonuses:
+                res, bon = obj.checkposistion(p1, p2, screen)
+                if res == 1:
+                    r1 = res
+                    bon1 = bon
+                if res == 2:
+                    r2 = res
+                    bon2 = bon
+
+        input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen,i)
         t = t + 0.01
+
         ######### BUTTONS ##########################
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
