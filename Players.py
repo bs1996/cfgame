@@ -1,4 +1,4 @@
-import pygame, numpy,sys,Join,server,json,random
+import pygame, numpy, sys, Join, server, json, random
 chat = ''
 chatbox = []
 user_message = ''
@@ -11,7 +11,6 @@ color3 = pygame.Color(100, 100, 100)
 active = False
 lastmessage1 = ''
 lastmessage2 = ''
-
 
 class bonus():
 
@@ -27,8 +26,13 @@ class bonus():
             self.colorb = [138, 69, 0]
         if self.bonus_id == 3:
             self.colorb = [135, 101, 249]
+
     def bonus_icon(self, screen):
-        self.bonus = pygame.draw.circle(screen, self.colorb, [self.xb, self.yb], 5)
+        pygame.draw.circle(screen, self.colorb, [self.xb, self.yb], 5)
+
+    def delbonus(self, screen):
+        if self.result != 0:
+            pygame.draw.circle(screen, [0, 0, 0], [self.xb, self.yb], 5)
 
     def checkposistion(self, p1, p2, screen):
         x1 = self.xb
@@ -38,25 +42,35 @@ class bonus():
                 for j in range(-5, 5, 1):
                     if numpy.array_equal([x1+i, y1+j], p1):
                         self.result = 1
-                        self.icon2 = pygame.draw.circle(screen, [0, 0, 0], [self.xb, self.yb], 5)
+                        self.delbonus(screen)
             for i in range(-5, 5, 1):
                 for j in range(-5, 5, 1):
                     if numpy.array_equal([x1+i, y1+j], p2):
                         self.result = 2
-                        self.icon3 = pygame.draw.circle(screen, [0, 0, 0], [self.xb, self.yb], 5)
+                        self.delbonus(screen)
         result_return = self.result
         bon_id = self.bonus_id
         return result_return, bon_id
 
 
+def obj_dict(obj):
+    return obj.__dict__
+
+
 def send(c, e):
+    print("send: ")
+    print(e)
     data = json.dumps(e).encode()
+    print(data)
     c.send(data)
 
 
 def rec(c):
+    print("rec")
     rdata = c.recv(1024).decode()
+    print(rdata)
     data = json.loads(rdata)
+    print(data)
     return data
 
 
@@ -127,7 +141,7 @@ def check_collision(r1, r2, r3, r4, p1, p2, p3, p4, g1, g2, g3, g4, loss):
     return g1,g2,loss
 
 
-def main(sock, players_number, player_number,nick):
+def main(sock, players_number, player_number, nick):
     pygame.init()
     pygame.font.init()
     pygame.font.get_init()
@@ -146,6 +160,7 @@ def main(sock, players_number, player_number,nick):
     bonnum = 0
     respnum = 0
     bonuses = []
+    bonuses_json = []
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -168,7 +183,8 @@ def main(sock, players_number, player_number,nick):
     direction = 0
     direction2 = 0
     add = 0
-    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add, "bonus": 0, "res": 0}
+    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
+           "bonus": 0, "res": 0, "bonuses": 0}
     if player_number == 1:
         x = 50
         y = 50
@@ -231,9 +247,13 @@ def main(sock, players_number, player_number,nick):
             y = 500
         send(sock, dat)
         data = rec(sock)
+        # ===================== preparing data =====================
         if player_number == 1:
             w1 = [x, y]
-            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add, "bonus": bon2, "res": r2}
+            for obj in bonuses:
+                bonuses_json.append(obj_dict(obj))
+            dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
+                   "bonus": bon2, "res": r2, "bonuses": bonuses_json}
             if data["number"] == 2:
                 w2 = data["1"]
                 direction2 = data["dir"]
@@ -242,11 +262,13 @@ def main(sock, players_number, player_number,nick):
         if player_number == 2:
             w2 = [x, y]
             direction2 = direction
-            dat = {"number": 2, "1": w2, "g2": 0, "dir": direction2, "chat": chat, "add": add, "bonus": 0, "res": 0}
+            dat = {"number": 2, "1": w2, "g2": 0, "dir": direction2, "chat": chat, "add": add,
+                   "bonus": 0, "res": 0, "bonuses": 0}
             bon2 = data["bonus"]
             r2 = data["res"]
             w1 = data["1"]
             g2 = data["g2"]
+            bonuses_json = data["bonuses"]
             if data["add"] == 1:
                 chatbox.append(data["chat"])
 
@@ -259,12 +281,13 @@ def main(sock, players_number, player_number,nick):
 
         # ====================BONUSES========================
 
-        if i > 500 and player_number == 1:
+        if i > 500:
             i = 0
         else:
             i = i + 1
         if i == 500:
-            bonuses.append(bonus(bonnum))
+            if player_number == 1:
+                bonuses.append(bonus(bonnum))
             bonuses[bonnum].bonus_icon(screen)
             i = 0
             bonnum = bonnum + 1
@@ -278,8 +301,10 @@ def main(sock, players_number, player_number,nick):
                 if res == 2:
                     r2 = res
                     bon2 = bon
-
-        input_rect, send_rect = GameScreen(w1,w2,w3,w4,screen,i)
+        if player_number != 1 and r2 == 2:
+            for obj in bonuses:
+                obj.delbonus(screen)
+        input_rect, send_rect = GameScreen(w1, w2, w3, w4, screen, i)
         t = t + 0.01
 
         ######### BUTTONS ##########################
