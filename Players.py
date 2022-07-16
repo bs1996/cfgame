@@ -183,7 +183,7 @@ def main(sock, players_number, player_number, nick):
     direction = 0
     direction2 = 0
     add = 0
-    dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
+    dat = {"number": 0, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
            "bonus": 0, "res": 0, "bonuses": 0}
     if player_number == 1:
         x = 50
@@ -250,8 +250,11 @@ def main(sock, players_number, player_number, nick):
         # ===================== preparing data =====================
         if player_number == 1:
             w1 = [x, y]
-            for obj in bonuses:
-                bonuses_json.append(obj_dict(obj))
+            if i == 500:
+                bonuses_json.append(obj_dict(bonuses[bonnum]))
+                i = 0
+                bonnum = bonnum + 1
+                respnum = respnum + 1
             dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
                    "bonus": bon2, "res": r2, "bonuses": bonuses_json}
             if data["number"] == 2:
@@ -289,9 +292,6 @@ def main(sock, players_number, player_number, nick):
             if player_number == 1:
                 bonuses.append(bonus(bonnum))
             bonuses[bonnum].bonus_icon(screen)
-            i = 0
-            bonnum = bonnum + 1
-            respnum = respnum + 1
         if respnum > 0:
             for obj in bonuses:
                 res, bon = obj.checkposistion(p1, p2, screen)
