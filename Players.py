@@ -58,19 +58,13 @@ def obj_dict(obj):
 
 
 def send(c, e):
-    print("send: ")
-    print(e)
     data = json.dumps(e).encode()
-    print(data)
     c.send(data)
 
 
 def rec(c):
-    print("rec")
     rdata = c.recv(1024).decode()
-    print(rdata)
     data = json.loads(rdata)
-    print(data)
     return data
 
 
@@ -161,6 +155,7 @@ def main(sock, players_number, player_number, nick):
     respnum = 0
     bonuses = []
     bonuses_json = []
+    rec_bonuses = []
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -271,6 +266,18 @@ def main(sock, players_number, player_number, nick):
             r2 = data["res"]
             w1 = data["1"]
             g2 = data["g2"]
+            if i > 500:    # communication test - y received
+                if len(data["bonuses"]) > 0:
+                    for json_item in data["bonuses"]:
+                        rec_bonus_number = data["bonuses"][json_item]["nbr"]
+                        rec_result = data["bonuses"][json_item]["result"]
+                        rec_x = data["bonuses"][json_item]["xb"]
+                        rec_y = data["bonuses"][json_item]["yb"]
+                        rec_bonus = data["bonuses"][json_item]["bonus_id"]
+                        rec_color = data["bonuses"][json_item]["colorb"]
+                        received_attributes = [rec_bonus_number, rec_result, rec_x, rec_y, rec_bonus, rec_color]
+                        rec_bonuses.append(received_attributes)
+                        print(received_attributes)
             bonuses_json = data["bonuses"]
             if data["add"] == 1:
                 chatbox.append(data["chat"])
@@ -291,7 +298,7 @@ def main(sock, players_number, player_number, nick):
         if i == 500:
             if player_number == 1:
                 bonuses.append(bonus(bonnum))
-            bonuses[bonnum].bonus_icon(screen)
+                bonuses[bonnum].bonus_icon(screen)
         if respnum > 0:
             for obj in bonuses:
                 res, bon = obj.checkposistion(p1, p2, screen)
