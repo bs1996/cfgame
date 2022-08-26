@@ -53,6 +53,23 @@ class bonus():
         return result_return, bon_id
 
 
+def draw_bonus(screen, color, x, y):
+    pygame.draw.circle(screen, color, [x, y], 5)
+
+
+def delete_bonus(screen, x, y):
+    pygame.draw.circle(screen, [0, 0, 0], [x, y], 5)
+
+
+def bonus_status_update(bonus_data, screen):
+
+    for n in range(len(bonus_data)):
+        if bonus_data[n]["result"] == 0:
+            draw_bonus(screen, bonus_data[n]["colorb"], bonus_data[n]["xb"], bonus_data[n]["yb"])
+        if bonus_data[n]["result"] == 1:
+            delete_bonus(screen, bonus_data[n]["xb"], bonus_data[n]["yb"])
+
+
 def obj_dict(obj):
     return obj.__dict__
 
@@ -142,6 +159,10 @@ def main(sock, players_number, player_number, nick):
     screen = pygame.display.set_mode((600, 600))
     pygame.display.set_caption("cfgame")
     running = 1
+    timeb1 = 0
+    timeb2 = 0
+    timeb3 = 0
+    timestartb1 = 0
     i = 0
     global active
     global color
@@ -155,7 +176,7 @@ def main(sock, players_number, player_number, nick):
     respnum = 0
     bonuses = []
     bonuses_json = []
-    rec_bonuses = []
+    rec_bonus_data = []
     x=0
     y=0
     g1, g2, g3, g4 = 0, 0, 0, 0 #gameover status
@@ -168,6 +189,7 @@ def main(sock, players_number, player_number, nick):
     p3 = 0
     p4 = 0
     t = 0  # time
+    t2 = 0
     xp = 1
     yp = 0
     loss = 0
@@ -266,18 +288,8 @@ def main(sock, players_number, player_number, nick):
             r2 = data["res"]
             w1 = data["1"]
             g2 = data["g2"]
-            if i > 500:    # communication test - y received
-                if len(data["bonuses"]) > 0:
-                    for json_item in data["bonuses"]:
-                        rec_bonus_number = data["bonuses"][json_item]["nbr"]
-                        rec_result = data["bonuses"][json_item]["result"]
-                        rec_x = data["bonuses"][json_item]["xb"]
-                        rec_y = data["bonuses"][json_item]["yb"]
-                        rec_bonus = data["bonuses"][json_item]["bonus_id"]
-                        rec_color = data["bonuses"][json_item]["colorb"]
-                        received_attributes = [rec_bonus_number, rec_result, rec_x, rec_y, rec_bonus, rec_color]
-                        rec_bonuses.append(received_attributes)
-                        print(received_attributes)
+            if t2 == 1:
+                rec_bonus_data = list(data["bonuses"])
             bonuses_json = data["bonuses"]
             if data["add"] == 1:
                 chatbox.append(data["chat"])
@@ -296,6 +308,7 @@ def main(sock, players_number, player_number, nick):
         else:
             i = i + 1
         if i == 500:
+            t2 = 1
             if player_number == 1:
                 bonuses.append(bonus(bonnum))
                 bonuses[bonnum].bonus_icon(screen)
@@ -305,12 +318,22 @@ def main(sock, players_number, player_number, nick):
                 if res == 1:
                     r1 = res
                     bon1 = bon
+                    if bon1 == 1:
+                        timestartb1 = 1
                 if res == 2:
                     r2 = res
                     bon2 = bon
+        if timestartb1 == 1:                  ####counting bonus 1 time
+            timeb1 = timeb1 + 1
+            if timeb1 == 400:
+                timestartb1 = 0
+                timeb1 = 0
+                bon1 = 0                      #######################
         if player_number != 1 and r2 == 2:
             for obj in bonuses:
                 obj.delbonus(screen)
+        if player_number != 1 and t2 == 1:
+            bonus_status_update(rec_bonus_data, screen)
         input_rect, send_rect = GameScreen(w1, w2, w3, w4, screen, i)
         t = t + 0.01
 
@@ -336,37 +359,61 @@ def main(sock, players_number, player_number, nick):
                         user_message += event.unicode
                 if event.key == pygame.K_DOWN and direction == 0:
                     xp = 0.0
-                    yp = 1
+                    if bon1 == 0:
+                        yp = 1
+                    if bon1 == 1:
+                        yp = 2
                     direction = 1
 
                 if event.key == pygame.K_UP and direction == 0:
                     xp = 0
-                    yp = -1
+                    if bon1 == 0:
+                        yp = -1
+                    if bon1 == 1:
+                        yp = -2
                     direction = 2
 
                 if event.key == pygame.K_LEFT and direction == 2:
-                    xp = -1
+                    if bon1 == 0:
+                        xp = -1
+                    if bon1 == 1:
+                        xp = -2
                     yp = 0
                     direction = 3
                 if event.key == pygame.K_RIGHT and direction == 2:
-                    xp = 1
+                    if bon1 == 0:
+                        xp = 1
+                    if bon1 == 1:
+                        xp = 2
                     yp = 0
                     direction = 0
                 if event.key == pygame.K_DOWN and direction == 3:
                     xp = 0
-                    yp = 1
+                    if bon1 == 0:
+                        yp = 1
+                    if bon1 == 1:
+                        yp = 2
                     direction = 1
 
                 if event.key == pygame.K_UP and direction == 3:
                     xp = 0
-                    yp = -1
+                    if bon1 == 0:
+                        yp = -1
+                    if bon1 == 1:
+                        yp = -2
                     direction = 2
                 if event.key == pygame.K_LEFT and direction == 1:
-                    xp = -1
+                    if bon1 == 0:
+                        xp = -1
+                    if bon1 == 1:
+                        xp = -2
                     yp = 0
                     direction = 3
                 if event.key == pygame.K_RIGHT and direction == 1:
-                    xp = 1
+                    if bon1 == 0:
+                        xp = 1
+                    if bon1 == 1:
+                        xp = 2
                     yp = 0
                     direction = 0
 
