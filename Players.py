@@ -163,6 +163,7 @@ def main(sock, players_number, player_number, nick):
     timeb2 = 0
     timeb3 = 0
     timestartb1 = 0
+    timestartb2 = 0
     i = 0
     global active
     global color
@@ -323,12 +324,20 @@ def main(sock, players_number, player_number, nick):
                 if res == 2:
                     r2 = res
                     bon2 = bon
+                    if bon2 == 1:
+                        timestartb2 = 1
         if timestartb1 == 1:                  ####counting bonus 1 time
             timeb1 = timeb1 + 1
             if timeb1 == 400:
                 timestartb1 = 0
                 timeb1 = 0
-                bon1 = 0                      #######################
+                bon1 = 0
+        if timestartb2 == 1:                  ####counting bonus 2 time
+            timeb2 = timeb2 + 1
+            if timeb2 == 400:
+                timestartb2 = 0
+                timeb2 = 0
+                bon2 = 0
         if player_number != 1 and r2 == 2:
             for obj in bonuses:
                 obj.delbonus(screen)
@@ -359,60 +368,60 @@ def main(sock, players_number, player_number, nick):
                         user_message += event.unicode
                 if event.key == pygame.K_DOWN and direction == 0:
                     xp = 0.0
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         yp = 1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         yp = 2
                     direction = 1
 
                 if event.key == pygame.K_UP and direction == 0:
                     xp = 0
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         yp = -1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         yp = -2
                     direction = 2
 
                 if event.key == pygame.K_LEFT and direction == 2:
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         xp = -1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         xp = -2
                     yp = 0
                     direction = 3
                 if event.key == pygame.K_RIGHT and direction == 2:
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         xp = 1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         xp = 2
                     yp = 0
                     direction = 0
                 if event.key == pygame.K_DOWN and direction == 3:
                     xp = 0
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         yp = 1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         yp = 2
                     direction = 1
 
                 if event.key == pygame.K_UP and direction == 3:
                     xp = 0
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         yp = -1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         yp = -2
                     direction = 2
                 if event.key == pygame.K_LEFT and direction == 1:
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         xp = -1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         xp = -2
                     yp = 0
                     direction = 3
                 if event.key == pygame.K_RIGHT and direction == 1:
-                    if bon1 == 0:
+                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
                         xp = 1
-                    if bon1 == 1:
+                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                         xp = 2
                     yp = 0
                     direction = 0
