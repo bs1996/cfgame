@@ -12,6 +12,7 @@ active = False
 lastmessage1 = ''
 lastmessage2 = ''
 
+
 class bonus():
 
     def __init__(self, nr):
@@ -62,7 +63,6 @@ def delete_bonus(screen, x, y):
 
 
 def bonus_status_update(bonus_data, screen):
-
     for n in range(len(bonus_data)):
         if bonus_data[n]["result"] == 0:
             draw_bonus(screen, bonus_data[n]["colorb"], bonus_data[n]["xb"], bonus_data[n]["yb"])
@@ -81,11 +81,16 @@ def send(c, e):
 
 def rec(c):
     rdata = c.recv(1024).decode()
-    data = json.loads(rdata)
+    try:
+        data = json.loads(rdata)
+    except:
+        print("double data")
+        data = {"number": 0, "1": [0, 0], "g2": 0, "dir": 0, "chat": 0, "add": 0,
+                "bonus": 0, "res": 0, "bonuses": 0}
     return data
 
 
-def GameScreen(w1, w2, w3, w4, screen,i):
+def GameScreen(w1, w2, w3, w4, screen, i):
     global lastmessage1
     global lastmessage2
 
@@ -116,7 +121,7 @@ def GameScreen(w1, w2, w3, w4, screen,i):
     pygame.draw.rect(screen, pygame.Color(100, 200, 255), pygame.Rect(w4[0], w4[1], 10, 10))
     pygame.display.update()
     clock = pygame.time.Clock()
-    clock.tick(100)
+    clock.tick(500)
     return input_rect, send_rect
 
 
@@ -136,7 +141,7 @@ def check_collision(r1, r2, r3, r4, p1, p2, p3, p4, g1, g2, g3, g4, loss):
           #  screen.blit(text1, textRect1)
 
     for i in r2:
-        if numpy.array_equal(i, p2) and g2 ==0:
+        if numpy.array_equal(i, p2) and g2 == 0:
             g2 = 1
             loss = loss + 1
 
@@ -227,8 +232,12 @@ def main(sock, players_number, player_number, nick):
             # draw rectangle and argument passed which should
             # be on screen
         if (g1 == 0 and player_number == 1) or (g2 == 0 and player_number == 2):
-            x = x + xp
-            y = y + yp
+            if (bon1 != 1 and player_number == 1) or (bon2 != 1 and player_number == 2):
+                x = x + xp              ##### moving by changing coordinates
+                y = y + yp
+            if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
+                x = x + 3*xp  ##### moving by changing coordinates - when bonus is active
+                y = y + 3*yp
         if loss == 3:
             running = 0
         if player_number == 1:
@@ -368,61 +377,38 @@ def main(sock, players_number, player_number, nick):
                         user_message += event.unicode
                 if event.key == pygame.K_DOWN and direction == 0:
                     xp = 0.0
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        yp = 1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        yp = 2
+                    yp = 1
                     direction = 1
 
                 if event.key == pygame.K_UP and direction == 0:
                     xp = 0
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        yp = -1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        yp = -2
+                    yp = -1
                     direction = 2
 
                 if event.key == pygame.K_LEFT and direction == 2:
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        xp = -1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        xp = -2
+                    xp = -1
                     yp = 0
                     direction = 3
                 if event.key == pygame.K_RIGHT and direction == 2:
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        xp = 1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        xp = 2
+                    xp = 1
                     yp = 0
                     direction = 0
                 if event.key == pygame.K_DOWN and direction == 3:
                     xp = 0
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        yp = 1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        yp = 2
+                    yp = 1
                     direction = 1
 
                 if event.key == pygame.K_UP and direction == 3:
                     xp = 0
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        yp = -1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        yp = -2
+                    yp = -1
                     direction = 2
+
                 if event.key == pygame.K_LEFT and direction == 1:
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        xp = -1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        xp = -2
+                    xp = -1
                     yp = 0
                     direction = 3
                 if event.key == pygame.K_RIGHT and direction == 1:
-                    if (bon1 == 0 and player_number == 1) or (bon2 == 0 and player_number == 2):
-                        xp = 1
-                    if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
-                        xp = 2
+                    xp = 1
                     yp = 0
                     direction = 0
 
