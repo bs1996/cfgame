@@ -238,25 +238,98 @@ def main(sock, players_number, player_number, nick):
             if (bon1 == 1 and player_number == 1) or (bon2 == 1 and player_number == 2):
                 x = x + 3*xp  ##### moving by changing coordinates - when bonus is active
                 y = y + 3*yp
+
         if loss == 3:
             running = 0
         if player_number == 1:
             if direction == 0:
+                if bon1 == 1:
+                    p1 = numpy.array([x + 8, y])
+                    road1.append([x-2, y])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p1 = numpy.array([x + 9, y])
+                    road1.append([x - 1, y])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p1 = numpy.array([x + 10, y])
             if direction == 3:
+                if bon1 == 1:
+                    p1 = numpy.array([x - 8, y])
+                    road1.append([x + 2, y])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p1 = numpy.array([x - 9, y])
+                    road1.append([x + 1, y])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p1 = numpy.array([x - 10, y])
             if direction == 1:
+                if bon1 == 1:
+                    p1 = numpy.array([x, y + 8])
+                    road1.append([x, y - 2])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p1 = numpy.array([x, y + 9])
+                    road1.append([x, y - 1])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p1 = numpy.array([x, y + 10])
             if direction == 2:
+                if bon1 == 1:
+                    p1 = numpy.array([x, y - 8])
+                    road1.append([x, y + 2])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p1 = numpy.array([x, y - 9])
+                    road1.append([x, y + 1])
+                    if g1 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p1 = numpy.array([x, y - 10])
 
             if direction2 == 0:
+                if bon2 == 1:
+                    p2 = numpy.array([w2[0] + 8, w2[1]])
+                    road2.append([w2[0] - 2, w2[1]])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p2 = numpy.array([w2[0] + 9, w2[1]])
+                    road2.append([w2[0] - 2, w2[1]])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p2 = numpy.array([w2[0] + 10, w2[1]])
             if direction2 == 3:
+                if bon2 == 1:
+                    p2 = numpy.array([w2[0] - 8, w2[1]])
+                    road2.append([w2[0] + 2, w2[1]])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p2 = numpy.array([w2[0] - 9, w2[1]])
+                    road2.append([w2[0] + 1, w2[1]])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p2 = numpy.array([w2[0] - 10, w2[1]])
             if direction2 == 1:
+                if bon2 == 1:
+                    p2 = numpy.array([w2[0], w2[1] + 8])
+                    road2.append([w2[0], w2[1] - 2])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p2 = numpy.array([w2[0], w2[1] + 9])
+                    road2.append([w2[0], w2[1] - 1])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p2 = numpy.array([w2[0], w2[1]+10])
             if direction2 == 2:
+                if bon2 == 1:
+                    p2 = numpy.array([w2[0], w2[1] - 8])
+                    road2.append([w2[0], w2[1] + 2])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
+                    p2 = numpy.array([w2[0], w2[1] - 9])
+                    road2.append([x, w2[1] + 1])
+                    if g2 == 0:
+                        g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p2 = numpy.array([w2[0], w2[1] - 10])
             road1.append(w1)
             road2.append(w2)
