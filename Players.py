@@ -51,6 +51,8 @@ class bonus():
                         self.delbonus(screen)
         result_return = self.result
         bon_id = self.bonus_id
+        if self.result != 0:
+            self.result = 4
         return result_return, bon_id
 
 
@@ -294,7 +296,7 @@ def main(sock, players_number, player_number, nick):
                     if g2 == 0:
                         g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                     p2 = numpy.array([w2[0] + 9, w2[1]])
-                    road2.append([w2[0] - 2, w2[1]])
+                    road2.append([w2[0] - 1, w2[1]])
                     if g2 == 0:
                         g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p2 = numpy.array([w2[0] + 10, w2[1]])
@@ -327,7 +329,7 @@ def main(sock, players_number, player_number, nick):
                     if g2 == 0:
                         g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                     p2 = numpy.array([w2[0], w2[1] - 9])
-                    road2.append([x, w2[1] + 1])
+                    road2.append([w2[0], w2[1] + 1])
                     if g2 == 0:
                         g1, g2, loss = check_collision(road1, road2, road3, road4, p1, p2, p3, p4, g1, g2, g3, g4, loss)
                 p2 = numpy.array([w2[0], w2[1] - 10])
@@ -356,7 +358,7 @@ def main(sock, players_number, player_number, nick):
                 bonnum = bonnum + 1
                 respnum = respnum + 1
             dat = {"number": 1, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
-                   "bonus": bon2, "res": r2, "bonuses": bonuses_json}
+                   "bonus": bon2, "res": r2, "bonuses": bonuses_json, "bonus1": bon1}
             if data["number"] == 2:
                 w2 = data["1"]
                 direction2 = data["dir"]
@@ -366,7 +368,8 @@ def main(sock, players_number, player_number, nick):
             w2 = [x, y]
             direction2 = direction
             dat = {"number": 2, "1": w2, "g2": 0, "dir": direction2, "chat": chat, "add": add,
-                   "bonus": 0, "res": 0, "bonuses": 0}
+                   "bonus": 0, "res": 0, "bonuses": 0, "bonus1": 0}
+            bon1 = data["bonus1"]
             bon2 = data["bonus"]
             r2 = data["res"]
             w1 = data["1"]
@@ -425,6 +428,16 @@ def main(sock, players_number, player_number, nick):
                 obj.delbonus(screen)
         if player_number != 1 and t2 == 1:
             bonus_status_update(rec_bonus_data, screen)
+        print(bon1)
+        if bon1 or bon2 == 2:
+            road1 = []
+            road2 = []
+            road3 = []
+            road4 = []
+            t = 0
+            bon1 = 0
+            bon2 = 0
+            screen = pygame.display.set_mode((600, 600))
         input_rect, send_rect = GameScreen(w1, w2, w3, w4, screen, i)
         t = t + 0.01
 
