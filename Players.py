@@ -209,7 +209,7 @@ def main(sock, players_number, player_number, nick):
     direction2 = 0
     add = 0
     dat = {"number": 0, "1": w1, "g2": g2, "dir": direction, "chat": chat, "add": add,
-           "bonus": 0, "res": 0, "bonuses": 0}
+           "bonus": 0, "res": 0, "bonuses": 0, "bonus1": 0}
     if player_number == 1:
         x = 50
         y = 50
@@ -388,7 +388,14 @@ def main(sock, players_number, player_number, nick):
             lastmessage1 = chatbox[0]
 
         # ====================BONUSES========================
-
+        if bon1 or bon2 == 2:
+            road1 = []
+            road2 = []
+            road3 = []
+            road4 = []
+            t = 0
+            bon1 = 0
+            bon2 = 0
         if i > 500:
             i = 0
         else:
@@ -398,7 +405,7 @@ def main(sock, players_number, player_number, nick):
             if player_number == 1:
                 bonuses.append(bonus(bonnum))
                 bonuses[bonnum].bonus_icon(screen)
-        if respnum > 0:
+        if respnum > 0 and player_number == 1:
             for obj in bonuses:
                 res, bon = obj.checkposistion(p1, p2, screen)
                 if res == 1:
@@ -429,14 +436,6 @@ def main(sock, players_number, player_number, nick):
         if player_number != 1 and t2 == 1:
             bonus_status_update(rec_bonus_data, screen)
         print(bon1)
-        if bon1 or bon2 == 2:
-            road1 = []
-            road2 = []
-            road3 = []
-            road4 = []
-            t = 0
-            bon1 = 0
-            bon2 = 0
             screen = pygame.display.set_mode((600, 600))
         input_rect, send_rect = GameScreen(w1, w2, w3, w4, screen, i)
         t = t + 0.01
