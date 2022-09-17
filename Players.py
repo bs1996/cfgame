@@ -171,6 +171,10 @@ def main(sock, players_number, player_number, nick):
     timeb3 = 0
     timestartb1 = 0
     timestartb2 = 0
+    timestart1_bonus3 = 0
+    timestart2_bonus3 = 0
+    bonus3_time1 = 0
+    bonus3_time2 = 0
     i = 0
     global active
     global color
@@ -388,7 +392,7 @@ def main(sock, players_number, player_number, nick):
             lastmessage1 = chatbox[0]
 
         # ====================BONUSES========================
-        if bon1 or bon2 == 2:
+        if bon1 == 2 or bon2 == 2:
             road1 = []
             road2 = []
             road3 = []
@@ -396,6 +400,7 @@ def main(sock, players_number, player_number, nick):
             t = 0
             bon1 = 0
             bon2 = 0
+            screen = pygame.display.set_mode((600, 600))
         if i > 500:
             i = 0
         else:
@@ -413,22 +418,38 @@ def main(sock, players_number, player_number, nick):
                     bon1 = bon
                     if bon1 == 1:
                         timestartb1 = 1
+                    if bon1 == 3:
+                        timestart1_bonus3 = 1
                 if res == 2:
                     r2 = res
                     bon2 = bon
                     if bon2 == 1:
                         timestartb2 = 1
-        if timestartb1 == 1:                  ####counting bonus 1 time
+                    if bon2 == 3:
+                        timestart2_bonus3 = 1
+        if timestartb1 == 1:                  ####counting bonus 1 time Player1
             timeb1 = timeb1 + 1
-            if timeb1 == 400:
+            if timeb1 == 100:
                 timestartb1 = 0
                 timeb1 = 0
                 bon1 = 0
-        if timestartb2 == 1:                  ####counting bonus 2 time
+        if timestartb2 == 1:                  ####counting bonus 1 time Player2
             timeb2 = timeb2 + 1
-            if timeb2 == 400:
+            if timeb2 == 100:
                 timestartb2 = 0
                 timeb2 = 0
+                bon2 = 0
+        if timestart1_bonus3 == 1:                  ####counting bonus 3 time
+            bonus3_time1 = bonus3_time1 + 1
+            if bonus3_time1 == 100:
+                timestart1_bonus3 = 0
+                bonus3_time1 = 0
+                bon1 = 0
+        if timestart2_bonus3 == 1:                  ####counting bonus 3 time
+            bonus3_time2 = bonus3_time2 + 1
+            if bonus3_time2 == 100:
+                timestart2_bonus3 = 0
+                bonus3_time2 = 0
                 bon2 = 0
         if player_number != 1 and r2 == 2:
             for obj in bonuses:
@@ -436,7 +457,7 @@ def main(sock, players_number, player_number, nick):
         if player_number != 1 and t2 == 1:
             bonus_status_update(rec_bonus_data, screen)
         print(bon1)
-            screen = pygame.display.set_mode((600, 600))
+        print("bon2: " + str(bon2))
         input_rect, send_rect = GameScreen(w1, w2, w3, w4, screen, i)
         t = t + 0.01
 
@@ -463,39 +484,62 @@ def main(sock, players_number, player_number, nick):
                 if event.key == pygame.K_DOWN and direction == 0:
                     xp = 0.0
                     yp = 1
-                    direction = 1
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 1
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 2
 
                 if event.key == pygame.K_UP and direction == 0:
                     xp = 0
                     yp = -1
-                    direction = 2
-
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 2
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 1
                 if event.key == pygame.K_LEFT and direction == 2:
                     xp = -1
                     yp = 0
-                    direction = 3
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 3
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 0
                 if event.key == pygame.K_RIGHT and direction == 2:
                     xp = 1
                     yp = 0
-                    direction = 0
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 0
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 3
                 if event.key == pygame.K_DOWN and direction == 3:
                     xp = 0
                     yp = 1
-                    direction = 1
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 1
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 2
 
                 if event.key == pygame.K_UP and direction == 3:
                     xp = 0
                     yp = -1
-                    direction = 2
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 2
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 1
 
                 if event.key == pygame.K_LEFT and direction == 1:
                     xp = -1
                     yp = 0
-                    direction = 3
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 3
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 0
                 if event.key == pygame.K_RIGHT and direction == 1:
                     xp = 1
                     yp = 0
-                    direction = 0
+                    if (player_number == 1 and bon2 != 3) or (player_number == 2 and bon1 != 3):
+                        direction = 0
+                    if (player_number == 1 and bon2 == 3) or (player_number == 2 and bon1 == 3):
+                        direction = 3
 
             # only do something if the event is of type QUIT
             if event.type == pygame.QUIT:
